@@ -1,3 +1,4 @@
+/*
 //https://devcenter.heroku.com/articles/getting-started-with-nodejs#provision-a-database
 const { Pool } = require('pg');
 const pool = new Pool({
@@ -17,6 +18,7 @@ app.get('/db', async (req, res) => {
     res.send("Error " + err);
   }
 });
+*/
 
 
 var express = require('express')
