@@ -1,8 +1,12 @@
 <h1>Employee Award Recognition</h1>
 
 <div>
-	<a href="/login">Login</a>
-	<br>
-	<a href="/register">Register</a>
+    <form class="register" action="/user/register" method="POST" class="signup-form" style="display: block;">
+      <input name="name" type="text" class="text-input" placeholder="first &amp; last name">
+      <input name="email" type="email" class="text-input" placeholder="email">
+      <input name="password" type="password" class="text-input" placeholder="password">
+      <input name="passwordConfirmation" type="password" class="text-input" placeholder="password confirmation">
+      <input class="sign-up-submit" type="submit">
+    </form>
 </div>
 
