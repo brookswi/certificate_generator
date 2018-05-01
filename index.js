@@ -38,10 +38,34 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(session({
+	key: 'user_sid',
+	secret: 'somerandonstuffs',
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		expires: 600000
+	}
+}));
 
-app.get('/', function (req, res) {
-	res.render('index')
-})
+app.use((req, res, next) => {
+	if (req.cookies.user_sid && !req.session.user) {
+		res.clearCookie('user_sid');        
+	}
+	next();
+});
+
+var sessionChecker = (req, res, next) => {
+	if (req.session.user && req.cookies.user_sid) {
+		res.redirect('/dashboard');
+	} else {
+		next();
+	}
+};
+
+app.get('/', sessionChecker, (req, res) => {
+	res.render('index');
+});
 
 //handle form for registration
 app.post('/user/register', (req, res) => {
@@ -62,9 +86,10 @@ app.post('/user/register', (req, res) => {
 		full_name: req.body.name,
 		email: req.body.email,
 		passwrd: req.body.password
-	})
-	return res.redirect('/');
-
+	}).then(user => {
+		req.session.user = user.dataValues;
+		return res.redirect('/dashboard');
+	});
 });
 
 app.get('/login', function (req, res) {
@@ -80,12 +105,11 @@ app.get('/dashboard', function (req, res) {
 app.post('/user/login', (req, res) => {
 	var email = req.body.email,
 		password = req.body.password;
-	console.log(email);
-	console.log(password);
 	User.findOne({ where: { email: email, passwrd: password } }).then(function (user) {
 		if (!user) {
 			res.redirect('/login');
 		} else {
+			req.session.user = user.dataValues;
 			res.redirect('/dashboard');
 		}
 	});
