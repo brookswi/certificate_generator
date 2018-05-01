@@ -1,5 +1,5 @@
 /*
-//https://devcenter.heroku.com/articles/getting-started-with-nodejs#provision-a-database
+	//https://devcenter.heroku.com/articles/getting-started-with-nodejs#provision-a-database
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -70,6 +70,27 @@ app.post('/user/register', (req, res) => {
 app.get('/login', function (req, res) {
 	res.render('login')
 })
+
+app.get('/dashboard', function (req, res) {
+	res.render('dashboard')
+})
+
+
+
+app.post('/user/login', (req, res) => {
+	var email = req.body.email,
+		password = req.body.password;
+	console.log(email);
+	console.log(password);
+	User.findOne({ where: { email: email, passwrd: password } }).then(function (user) {
+		if (!user) {
+			res.redirect('/login');
+		} else {
+			res.redirect('/dashboard');
+		}
+	});
+
+});
 
 //start server
 const port = process.env.PORT || 8080;

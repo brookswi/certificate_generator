@@ -29,19 +29,8 @@ var User = sequelize.define('reg_user', {
 	}
 },{
 	tableName: 'reg_user'
-},/* {
-	hooks: {
-		beforeCreate: (user) => {
-			const salt = bcrypt.genSaltSync();
-			user.password = bcrypt.hashSync(user.password, salt);
-		}
-	},
-}*/);
-/*
-User.prototype.validPassword = function(password) {
-	return bcrypt.compareSync(password,this.password)  
-}
-*/
+});
+
 // create all the defined tables in the specified database.
 sequelize.sync()
 	.then(() => console.log('users table has been successfully created, if one doesn\'t exist'))
