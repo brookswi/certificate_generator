@@ -1,0 +1,81 @@
+<h1>Admin Site</h1>
+<div> 
+  <h3>Regular Users</h3>
+  <table> 
+    <thead> 
+      <th>Full Name</th> 
+      <th>Email</th>
+      <th>Created At</th>
+      <th>Updated At</th>
+      <th>Action</th>
+    </thead>
+    <tbody> 
+    {{#each regUsers}}
+      <form action="/adminUser/action" method="POST" style="display:block;"> 
+        <tr>
+          <td hidden>
+            <input name="id" type="text" value={{this.user_id}} readonly>
+          <td>
+            <input name="name" type="text" value="{{this.full_name}}"> 
+          <td>
+            <input name="email" type="email" value={{this.email}} size="25"> 
+          <td>
+            <input type="text" value="{{this.createdAt}}" size="40" readonly> 
+          <td>
+            <input type="text" value="{{this.updatedAt}}" size="40" readonly> 
+          <td> 
+            <input name="action" type="submit" value="Delete"> 
+            <input name="action" type="submit" value="Edit">
+            <input name="type" type="text" value="regular" hidden>
+      </form>
+    {{/each}} 
+    </tbody>
+  </table>
+</div>
+<br>
+<div> 
+  <h3>Admin Users</h3>
+  <table> 
+    <thead> 
+      <th>Email</th>  
+      <th>Created At</th>
+      <th>Updated At</th>
+      <th>Action</th>
+    </thead>
+    <tbody>
+    {{#each adminUsers}}
+      <form action="/adminUser/action" method="POST" style="display:block;"> 
+        <tr> 
+          <td hidden>
+            <input name="id" type="text" value={{this.admin_id}} readonly> 
+          <td>
+            <input name="email" type="email" value={{this.email}} size="25"> 
+          <td>
+            <input type="text" value="{{this.createdAt}}" size="40" readonly> 
+          <td>
+            <input type="text" value="{{this.updatedAt}}" size="40" readonly> 
+          <td> 
+            <input name="action" type="submit" value="Delete"> 
+            <input name="action" type="submit" value="Edit">
+            <input name="type" type="text" value="admin" hidden>
+      </form>
+    {{/each}} 
+    </tbody>
+  </table>
+</div>
+<br><br>
+<div>
+  <h3>Add a User</h3>
+  <form action="/adminUser/addUser" method="POST" style="display: block;">
+    <input name="name" type="text" placeholder="Full Name">
+    <input name="email" type="email" placeholder="Email">
+    <input name="password" type="password" placeholder="Password">
+    <input name="passwordConfirmation" type="password"  placeholder="Password Confirmation">
+    <select name = "type" required>
+      <option value="" selected>Select a user type</option>
+      <option value="regular">Regular</option>
+      <option value="admin">Admin</option>
+    </select> 
+    <input type="submit" value="Add User">
+  </form>
+</div>

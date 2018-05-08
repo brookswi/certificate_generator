@@ -3,10 +3,15 @@
 <div>i
 	<h2>Login</h2>
 	<form class="login" action="/user/login" method="POST" class="login-form" style="display: block;">
-		<input name="email" type="email" class="text-input" placeholder="email">
-		<input name="password" type="password" class="text-input" placeholder="password">
+		<input name="email" type="email" class="text-input" placeholder="Email">
+		<input name="password" type="password" class="text-input" placeholder="Password">
+        <select name = "type" required>
+            <option value="" selected>Select a user type</option>
+            <option value="regular">Regular</option>
+            <option value="admin">Admin</option>
+        </select>
 		<input class="login-submit" type="submit">
-	</form>
+	</form> 
 </div>
 
 
@@ -18,6 +23,7 @@
       <input name="password" type="password" class="text-input" placeholder="password">
       <input name="passwordConfirmation" type="password" class="text-input" placeholder="password confirmation">
       <input class="sign-up-submit" type="submit">
+      <input name="type" value="regular" hidden>
     </form>
 </div>
 

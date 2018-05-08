@@ -1,5 +1,3 @@
-CREATE EXTENSION pgcrypto;
-
 DROP TABLE IF EXISTS signature;
 DROP TABLE IF EXISTS reg_user;
 DROP TABLE IF EXISTS award;
