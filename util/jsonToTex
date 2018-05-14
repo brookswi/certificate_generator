@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import sys
+import shutil
+import json
+
+#constant names in template
+AWARD_TYPE_STR = "typeOfAward"
+RECIPIENT_NAME_STR = "awardeeName"
+AWARD_DATE_STR = "awardedDate"
+USER_NAME_STR = "authorizerName"
+SIGNATURE_NAME_STR = "signatureFileName"
+
+def templateSwitch(number):
+	constDict = {
+		0: AWARD_TYPE_STR,
+		1: RECIPIENT_NAME_STR,
+		2: AWARD_DATE_STR,
+		3: USER_NAME_STR,
+		4: SIGNATURE_NAME_STR
+	}
+	return constDict[number]
+
+def jsonSwitch(jsonObject, number):
+	jsonDict = {
+		0: jsonObject["type_name"],
+		1: jsonObject["recipient"],
+		2: jsonObject["award_date"],
+		3: jsonObject["full_name"],
+		4: jsonObject["img_file"]
+
+	}
+	return jsonDict[number]
+	
+jsonFile = open(sys.argv[1], "r")
+jsonObject = json.load(jsonFile)
+outputFile = open(sys.argv[2], "w")
+
+# search output file for above constant names and replace with json data
+#read each line, use switch to find constant names
+template = open(sys.argv[3], "r")
+index = 0
+for line in template:
+	if index < 5:
+		if line.find(templateSwitch(index)) != -1:
+			newline = line.replace(templateSwitch(index), jsonSwitch(jsonObject, index))
+			index += 1
+			outputFile.write(newline)
+		else:
+			outputFile.write(line)
+	else: 
+		outputFile.write(line)
+outputFile.close()

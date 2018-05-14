@@ -1,24 +1,31 @@
-\documentclass[landscape, draft]{article}
+\documentclass[landscape]{article}
 \usepackage{graphicx}
+\graphicspath{ {images/} }
 \pagestyle{empty}
 \begin{document}
 \begin{center}
 \Huge
-\textsc{typeOfAward
+\textsc{typeOfAward}
+\bigskip 
+\\  
+\textsc{\emph{awardeeName}}
 \bigskip
-\\\emph{awardeeName}
+\\ 
+\textsc{Awarded:} 
 \bigskip
-\\Awarded: 
+\\ 
+\textsc{awardedDate}
 \bigskip
-\\awardedDate
+\\ 
+\textsc{Authorized by:} 
 \bigskip
-\\Authorized by: 
+\\ 
+\textsc{authorizerName}
 \bigskip
-\\authorizerName
+\\ 
+\textsc{Signature: }
 \bigskip
-\\Signature: 
-}
-\bigskip
-\\%\includegraphics[]{signatureFileName}
+\\ 
+\includegraphics{signatureFileName}
 \end{center}
 \end{document}
