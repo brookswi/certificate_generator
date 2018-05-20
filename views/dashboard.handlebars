@@ -1,3 +1,22 @@
 <h1>Employee Award Recognition</h1>
 
 <p>welcome!</p>
+
+<div>
+	<h2>Give an Award</h2>
+	<form action="/addAward" method="POST" style="display: block;">
+		<input name="name" type="text" placeholder="Recipient Name">
+		<input name="email" type="email" placeholder="Recipient Email">
+		<select name = "type" required>
+			<option value="" selected>Select a award type</option>
+			<option value="bronze">Bronze</option>
+			<option value="silver">Silver</option>
+			<option value="gold">Gold</option>
+			<option value="diamond">Diamond</option>
+		</select> 
+		<input type="submit" value="Give Award">
+	</form>
+</div>
+
+<br><br>
+<a href="/logout">Log Out</a>

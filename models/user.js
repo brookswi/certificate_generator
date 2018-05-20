@@ -57,6 +57,50 @@ var adminUser = sequelize.define('admin_user', {
 	tableName: 'admin_user'
 });
 
+// award model
+var award = sequelize.define('award', {
+	recipient: {
+		type: Sequelize.STRING,
+	},
+	email: {
+		type: Sequelize.STRING,
+	},
+	award_id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true
+	},
+	user_id: {
+		type: Sequelize.INTEGER,
+		references: {
+     		// This is a reference to another model
+     			model: "reg_user",
+
+     		// This is the column name of the referenced model
+     			key: 'id',
+
+     		// This declares when to check the foreign key constraint. PostgreSQL only.
+     			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+   		}
+	},
+	type_id: {
+		type: Sequelize.INTEGER,
+		references: {
+     		// This is a reference to another model
+     			model: "award_type",
+
+     		// This is the column name of the referenced model
+     			key: 'id',
+
+     		// This declares when to check the foreign key constraint. PostgreSQL only.
+     			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+   		}
+
+	}
+},{
+	tableName: 'award'
+});
+
 
 // create all the defined tables in the specified database.
 sequelize.sync()
@@ -71,5 +115,5 @@ sequelize.sync()
 
 
 // export User models for use in other files.
-module.exports = {User, adminUser, sequelize};
+module.exports = {User, adminUser, award, sequelize};
 
