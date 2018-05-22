@@ -93,7 +93,6 @@ app.get('/adminDashboard', async (req, res) => {
 	await sequelize.query('SELECT * FROM admin_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
 		response.adminUsers = results;  
 	});  
-	console.log(response);
 	res.render('adminDashboard', response);  
 });
 
@@ -181,7 +180,29 @@ app.post('/adminUser/action', (req, res) => {
 		}
 	}
 
+    // Account summary
+    if (action == "Account Summary")
+    {
+        res.redirect('/accountSum/?id=' + id);
+    }
+         
 });
+
+app.get('/accountSum', async (req, res) => {
+    var id = req.query.id;
+
+	var response = {}
+	await sequelize.query('SELECT A.user_id, A.recipient, A.email, A.award_date, AT.type_name FROM award A ' +
+    'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\'', { type: sequelize.QueryTypes.SELECT }).then(results => {
+		response.awards = results; 
+	}); 
+    await sequelize.query('SELECT AT.type_name, COUNT(AT.type_name) AS type_count FROM award A ' +
+    'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\' GROUP BY AT.type_name', { type: sequelize.QueryTypes.SELECT }).then(results => {
+		response.awardStats = results; 
+	}); 
+	res.render('accountSummary', response);  
+});
+
 
 app.post('/addAward', (req, res) => {
 	console.log(req.session.user.user_id);
