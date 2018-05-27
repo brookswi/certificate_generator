@@ -9,6 +9,7 @@ var User = require('./models/user').User;
 var adminUser = require('./models/user').adminUser;
 var sequelize = require('./models/user').sequelize;
 var award = require('./models/user').award;
+var nodemailer = require('nodemailer');
 
 //configure app
 var app = express();
@@ -49,6 +50,15 @@ app.get('/', sessionChecker, (req, res) => {
 	res.render('index');
 });
 
+var transporter = nodemailer.createTransport({
+ service: 'gmail',
+ auth: {
+        user: 'oregonstatecapstone@gmail.com',
+        pass: 'capstone'
+    }
+});
+
+
 // Handle form for registration
 app.post('/user/register', (req, res) => {
 	if (req.body.password !== req.body.passwordConfirmation) {
@@ -81,8 +91,13 @@ app.get('/login', function (req, res) {
 	res.render('login')
 });
 
-app.get('/dashboard', function (req, res) {
-	res.render('dashboard')
+app.get('/dashboard', async (req, res) => {
+	var response = {},
+		userID = req.session.user.user_id;
+	await sequelize.query('SELECT * FROM award WHERE user_id='+userID, { type: sequelize.QueryTypes.SELECT }).then(results => {
+		response.awards = results; 
+	}); 
+	res.render('dashboard', response)
 });
 
 app.get('/adminDashboard', async (req, res) => {
@@ -180,32 +195,31 @@ app.post('/adminUser/action', (req, res) => {
 		}
 	}
 
-    // Account summary
-    if (action == "Account Summary")
-    {
-        res.redirect('/accountSum/?id=' + id);
-    }
-         
+	// Account summary
+	if (action == "Account Summary")
+	{
+		res.redirect('/accountSum/?id=' + id);
+	}
+
 });
 
 app.get('/accountSum', async (req, res) => {
-    var id = req.query.id;
+	var id = req.query.id;
 
 	var response = {}
 	await sequelize.query('SELECT A.user_id, A.recipient, A.email, A.award_date, AT.type_name FROM award A ' +
-    'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\'', { type: sequelize.QueryTypes.SELECT }).then(results => {
-		response.awards = results; 
-	}); 
-    await sequelize.query('SELECT AT.type_name, COUNT(AT.type_name) AS type_count FROM award A ' +
-    'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\' GROUP BY AT.type_name', { type: sequelize.QueryTypes.SELECT }).then(results => {
-		response.awardStats = results; 
-	}); 
+		'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\'', { type: sequelize.QueryTypes.SELECT }).then(results => {
+			response.awards = results; 
+		}); 
+	await sequelize.query('SELECT AT.type_name, COUNT(AT.type_name) AS type_count FROM award A ' +
+		'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\' GROUP BY AT.type_name', { type: sequelize.QueryTypes.SELECT }).then(results => {
+			response.awardStats = results; 
+		}); 
 	res.render('accountSummary', response);  
 });
 
 
 app.post('/addAward', (req, res) => {
-	console.log(req.session.user.user_id);
 	var awardType = req.body.type,
 		awardID = 0,
 		userID = req.session.user.user_id;
@@ -225,17 +239,40 @@ app.post('/addAward', (req, res) => {
 	{
 		awardID = 4;
 	}
-	
 	award.create({
-			recipient: req.body.name,
-			email: req.body.email,
-			type_id: awardID,
-			user_id: userID,
-		}).then(() => { 
-			return res.redirect('/dashboard');
-		});
+		recipient: req.body.name,
+		email: req.body.email,
+		award_date: req.body.date,
+		type: awardID,
+		user_id: userID,
+	}).then(() => { 
+		return res.redirect('/dashboard');
+	});
 
 
+});
+
+app.post('/user/forgot', (req, res) => {
+	var email = req.body.email;
+	User.findOne({ where: {email: email}}).then(function (user) {
+		if (user) {
+			const mailOptions = {
+				from: 'oregonstatecapstone@gmail.com', // sender address
+  				to: email, // list of receivers
+  				subject: 'Forgot Password', // Subject line
+  				html: 'Password: ' + user.passwrd // plain text body
+			};
+
+			transporter.sendMail(mailOptions, function (err, info) {
+   				if(err)
+     					console.log(err)
+   				else
+     					console.log(info);
+			});
+		}
+
+	});
+	return res.redirect('/');
 });
 
 app.post('/user/login', (req, res) => {

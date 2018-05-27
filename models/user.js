@@ -65,6 +65,9 @@ var award = sequelize.define('award', {
 	email: {
 		type: Sequelize.STRING,
 	},
+	award_date: {
+		type: Sequelize.DATE,
+	},
 	award_id: {
 		type: Sequelize.INTEGER,
 		primaryKey: true,
@@ -83,19 +86,13 @@ var award = sequelize.define('award', {
      			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
    		}
 	},
-	type_id: {
+	type: {
 		type: Sequelize.INTEGER,
 		references: {
-     		// This is a reference to another model
-     			model: "award_type",
-
-     		// This is the column name of the referenced model
-     			key: 'id',
-
-     		// This declares when to check the foreign key constraint. PostgreSQL only.
-     			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
-   		}
-
+			model: "award_type",
+			key:"type_id",
+			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+		}
 	}
 },{
 	tableName: 'award'

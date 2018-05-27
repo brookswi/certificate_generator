@@ -1,22 +1,43 @@
 <h1>Employee Award Recognition</h1>
 
-<p>welcome!</p>
+<p>Welcome!</p>
 
 <div>
 	<h2>Give an Award</h2>
 	<form action="/addAward" method="POST" style="display: block;">
 		<input name="name" type="text" placeholder="Recipient Name">
 		<input name="email" type="email" placeholder="Recipient Email">
+		<input name="date" type="date" placeholder="Award Date">
 		<select name = "type" required>
 			<option value="" selected>Select a award type</option>
 			<option value="bronze">Bronze</option>
 			<option value="silver">Silver</option>
 			<option value="gold">Gold</option>
 			<option value="diamond">Diamond</option>
-		</select> 
+		</select> 	
+
 		<input type="submit" value="Give Award">
 	</form>
 </div>
+<div>
+	<h2>Awards Given</h2>
+	<table> 
+		<thead> 
+		<th>Recipient</th> 
+		<th>Award Date</th>
+    		</thead>
+		<tbody>
+		{{#each awards}}		
+		<tr>
+		<td>{{this.recipient}}</td>
+		<td>{{this.award_date}}</td>
+		</tr>
+		{{/each}}
+		</tbody>
+	</table>
+</div>
 
 <br><br>
+<div>
 <a href="/logout">Log Out</a>
+</div>
