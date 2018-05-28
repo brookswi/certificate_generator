@@ -61,6 +61,7 @@ var transporter = nodemailer.createTransport({
 
 // Handle form for registration
 app.post('/user/register', (req, res) => {
+    console.log(req.body);
 	if (req.body.password !== req.body.passwordConfirmation) {
 		return res.render('index', {
 			errors: ['Password and password confirmation do not match'],
@@ -91,17 +92,22 @@ app.get('/login', function (req, res) {
 	res.render('login')
 });
 
+app.get('/register', function (req, res) {
+    res.render('register')
+});
+
 app.get('/dashboard', async (req, res) => {
 	var response = {},
 		userID = req.session.user.user_id;
-	await sequelize.query('SELECT * FROM award WHERE user_id='+userID, { type: sequelize.QueryTypes.SELECT }).then(results => {
-		response.awards = results; 
-	}); 
+
+    await sequelize.query('SELECT A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT}).then(results => {
+        response.awards = results;
+    });
 	res.render('dashboard', response)
 });
 
 app.get('/adminDashboard', async (req, res) => {
-	var response = {}
+	var response = {};
 	await sequelize.query('SELECT * FROM reg_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
 		response.regUsers = results; 
 	}); 
@@ -109,6 +115,22 @@ app.get('/adminDashboard', async (req, res) => {
 		response.adminUsers = results;  
 	});  
 	res.render('adminDashboard', response);  
+});
+
+app.get('/manageReg', async (req, res) => {
+    var response = {};
+    await sequelize.query('SELECT * FROM reg_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
+		response.regUsers = results; 
+	}); 
+    res.render('manageReg', response);
+});
+
+app.get('/manageAdmin', async (req, res) => {
+    var response = {};
+    await sequelize.query('SELECT * FROM admin_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
+		response.adminUsers = results; 
+	}); 
+    res.render('manageAdmin', response);
 });
 
 
@@ -133,7 +155,7 @@ app.post('/adminUser/addUser', (req, res) => {
 			email: req.body.email,
 			passwrd: req.body.password
 		}).then(() => { 
-			return res.redirect('/adminDashboard');
+			return res.redirect('/manageReg');
 		});
 	}
 	else if (req.body.type == "admin")
@@ -143,7 +165,7 @@ app.post('/adminUser/addUser', (req, res) => {
 			email: req.body.email,
 			passwrd: req.body.password
 		}).then(() => { 
-			return res.redirect('/adminDashboard');
+			return res.redirect('/manageAdmin');
 		});
 	}
 });
@@ -162,16 +184,16 @@ app.post('/adminUser/action', (req, res) => {
 	{
 		if (type == "regular")
 		{
-			sequelize.query('DELETE FROM reg_user WHERE full_name = \'' + name + '\' AND email = \'' + email + '\'', { type: sequelize.QueryTypes.DELETE }).then(() => 
+			sequelize.query('DELETE FROM reg_user WHERE user_id = ' + id, { type: sequelize.QueryTypes.DELETE }).then(() => 
 				{       
-					return res.redirect('/adminDashboard'); 
+					return res.redirect('/manageReg'); 
 				});         
 		}
 		else if (type == "admin")
 		{
-			sequelize.query('DELETE FROM admin_user WHERE email = \'' + email + '\'', { type: sequelize.QueryTypes.DELETE }).then(() => 
+			sequelize.query('DELETE FROM admin_user WHERE admin_id = ' + id, { type: sequelize.QueryTypes.DELETE }).then(() => 
 				{       
-					return res.redirect('/adminDashboard'); 
+					return res.redirect('/manageAdmin'); 
 				});         
 		}
 	}
@@ -183,14 +205,14 @@ app.post('/adminUser/action', (req, res) => {
 		{
 			sequelize.query('UPDATE reg_user SET full_name = \'' + name + '\', email = \'' + email + '\' WHERE user_id = \'' + id + '\'', { 
 				type: sequelize.QueryTypes.DELETE }).then(() => {        
-					return res.redirect('/adminDashboard'); 
+					return res.redirect('/manageReg'); 
 				});         
 		}
 		else if (type == "admin")
 		{
 			sequelize.query('UPDATE admin_user SET email = \'' + email + '\' WHERE admin_id = \'' + id + '\'', { 
 				type: sequelize.QueryTypes.DELETE }).then(() => {        
-					return res.redirect('/adminDashboard'); 
+					return res.redirect('/manageAdmin'); 
 				});         
 		}
 	}
@@ -203,19 +225,14 @@ app.post('/adminUser/action', (req, res) => {
 
 });
 
-app.get('/accountSum', async (req, res) => {
-	var id = req.query.id;
 
-	var response = {}
-	await sequelize.query('SELECT A.user_id, A.recipient, A.email, A.award_date, AT.type_name FROM award A ' +
-		'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\'', { type: sequelize.QueryTypes.SELECT }).then(results => {
-			response.awards = results; 
-		}); 
-	await sequelize.query('SELECT AT.type_name, COUNT(AT.type_name) AS type_count FROM award A ' +
-		'INNER JOIN award_type AT ON A.type_id = AT.type_id WHERE A.user_id = \'' + id + '\' GROUP BY AT.type_name', { type: sequelize.QueryTypes.SELECT }).then(results => {
-			response.awardStats = results; 
-		}); 
-	res.render('accountSummary', response);  
+
+app.get('/awardHistory', async (req, res) => {
+    var response = {};
+    await sequelize.query('SELECT A.recipient, A.email AS recipient_email, A.award_date, AT.type_name, RU.full_name, RU.email AS sender_email FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id INNER JOIN reg_user RU ON A.user_id = RU.user_id', {type: sequelize.QueryTypes.SELECT}).then(results => {
+        response.awards = results;
+    });
+    res.render('awardHistory', response);
 });
 
 

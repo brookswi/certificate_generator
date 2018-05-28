@@ -1,32 +1,78 @@
-<h1>Employee Award Recognition</h1>
-
-<div>
-	<h2>Login</h2>
-	<form class="login" action="/user/login" method="POST" class="login-form" style="display: block;">
-		<input name="email" type="email" class="text-input" placeholder="Email">
-		<input name="password" type="password" class="text-input" placeholder="Password">
-        <select name = "type" required>
+<div class="container"> 
+  <div class="row align-items-center" style="height:200px">
+    <div class="col">
+      <h1 class="text-center">Employee Award Recognition</h1><br>
+    </div> 
+  </div>
+  <div class="row align-items-center"> 
+    <div class="col-2"></div>
+    <div class="col-8 align-self-center">
+      <h2>Login</h2><br>
+      <form action="/user/login" method="POST" class="login-form" style="display: block;">
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input name="email" type="email" class="form-control" id="email" placeholder="Enter email"> 
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label> 
+	      <input name="password" type="password" class="form-control" id="passwrd" placeholder="Enter password"> 
+        </div>
+        <div class="form-group"> 
+          <select class="form-control" name = "type" required>
             <option value="" selected>Select a user type</option>
             <option value="regular">Regular</option>
             <option value="admin">Admin</option>
-        </select>
-		<input class="login-submit" type="submit">
-	</form> 
+          </select> 
+        </div> 
+        <div class="form-group">
+          <input class="btn btn-primary form-control" type="submit">
+        </div> 
+      </form>       
+    </div>
+    <div class="col-2"></div>
+  </div> 
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-5">
+      <a href="/register" style="font-size:25px;">Click here to register an account</a>
+    </div>
+    <div class="col-5"></div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-3">
+      <h3>Forgot Password?</h3><br> 
+    </div>
+    <div class="col-5"> 
+	  <form class="form-inline" action="/user/forgot" method="POST" style="display: block;">   
+        <input name="email" type="email" class="form-control" placeholder="Email">
+        <input class="btn btn-primary" type="submit"> 
+      </form>
+    </div> 
+    <div class="col-2"></div>
+  </div> 
 </div>
 
-
-<div>
-	<h2>Register</h2>
+<!--
+  <div id="register">
+    <h2>Register</h2>
     <form class="register" action="/user/register" method="POST" class="signup-form" style="display: block;">
-      <input name="name" type="text" class="text-input" placeholder="first &amp; last name">
-      <input name="email" type="email" class="text-input" placeholder="email">
-      <input name="password" type="password" class="text-input" placeholder="password">
-      <input name="passwordConfirmation" type="password" class="text-input" placeholder="password confirmation">
+      <input name="name" type="text" class="text-input" placeholder="First &amp; Last Name">
+      <input name="email" type="email" class="text-input" placeholder="Email">
+      <input name="password" type="password" class="text-input" placeholder="Password">
+      <input name="passwordConfirmation" type="password" class="text-input" placeholder="Password Confirmation">
       <input class="sign-up-submit" type="submit">
       <input name="type" value="regular" hidden>
-    </form>
-</div>
+    </form> 
+  </div>
+</div> 
+-->
+  
 
+
+
+<!--
 <div>
 	<h3>Forgot Password?</h3>
 	<form class="forgot" action="/user/forgot" method="POST" class="signup-form" style="display: block;">
@@ -34,4 +80,5 @@
       <input class="forgot-submit" type="submit">
     </form>
 </div>
+-->
 
