@@ -20,6 +20,17 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <br>
+	  <h2>Change Name</h2>
+	  <form action="/changeName" method="POST" style="display: block;">
+		<input type="hidden" id="id" name="id" value="{{id}}"> </input>
+	    <div class="form-group">
+          <label for="name">New Name:</label>
+		  <input name="name" class="form-control" type="text" placeholder="Enter Your New Name">
+        </div>
+		<div class="form-group">
+		  <input class="btn btn-primary form-control" type="submit" value="Change Name">
+        </div>
+	   </form>
       <h2>Give an Award</h2>
 	  <form action="/addAward" method="POST" style="display: block;">
         <div class="form-group">

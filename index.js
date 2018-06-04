@@ -99,7 +99,7 @@ app.get('/register', function (req, res) {
 app.get('/dashboard', async (req, res) => {
 	var response = {},
 		userID = req.session.user.user_id;
-
+	response.id = userID;
     await sequelize.query('SELECT A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT}).then(results => {
         response.awards = results;
     });
@@ -235,6 +235,13 @@ app.get('/awardHistory', async (req, res) => {
     res.render('awardHistory', response);
 });
 
+app.post('/changeName', (req, res) => {
+	var name = req.body.name;
+	var id = req.body.id;
+	sequelize.query('UPDATE reg_user SET full_name = ? WHERE user_id = ?', { replacements: [name, id]}).then(() => {        
+			return res.redirect('/dashboard'); 
+		});   
+});
 
 app.post('/addAward', (req, res) => {
 	var awardType = req.body.type,
