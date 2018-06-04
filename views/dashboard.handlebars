@@ -20,6 +20,7 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <br>
+	  <h2> Welcome, {{full_name}}</h2>
 	  <h2>Change Name</h2>
 	  <form action="/changeName" method="POST" style="display: block;">
 		<input type="hidden" id="id" name="id" value="{{id}}"> </input>
@@ -75,6 +76,12 @@
               <td>{{this.recipient_email}}</td>
 		      <td>{{this.type_name}}</td>
               <td>{{this.award_date}}</td>
+			  <td>
+			  		<form action="/deleteAward" method="POST">
+						<input type="hidden" name="id" value={{this.award_id}}>
+						<input type="submit" value="Delete">
+					</form>
+			   </td>
 		    </tr>
 		  {{/each}}
 		  </tbody>
