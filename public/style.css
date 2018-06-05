@@ -4,7 +4,45 @@ table, th, td {
 
 body {
   font-size: .875rem;
+  height: 100%;
 }
+
+html {
+    height: 100%;
+}
+
+.p-large {
+    font-size: large;
+}
+    
+hr {
+    border-color: white;
+}
+
+.login-page {
+    background-color: rgba(229, 228, 255, 0.2); 
+    border-radius: 25px;
+}
+
+label {
+    font-size: large;
+}
+
+.bg-img { 
+    /* The image used */
+    /*background-image: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full page/img(20).jpg");*/
+    /*background-image: url("http://mdbootstrap.com/img/Photos/Others/img%20(42).jpg");*/
+    background-image: url("/images/building.jpg"); 
+
+    /* Full height */
+    height: 100%; 
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}  
+
 
 .feather {
   width: 16px;
