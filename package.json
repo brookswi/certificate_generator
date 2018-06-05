@@ -25,6 +25,7 @@
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
+    "jquery": "^3.3.1",
     "morgan": "^1.9.0",
     "node-latex": "^2.4.4",
     "nodemailer": "^4.6.5",

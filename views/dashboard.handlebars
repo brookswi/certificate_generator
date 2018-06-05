@@ -2,7 +2,7 @@
   <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Dashboard</a>
   <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" href="/logout">Log Out</a> 
+        <a class="nav-link active" href="/logout">Log Out</a> 
       </li>
     </ul>
 </nav>
@@ -14,6 +14,9 @@
           <li class="nav-item"> 
             <a class="nav-link active" href="/dashboard">Dashboard</a>
           </li>
+          <li class="nav-item"> 
+            <a class="nav-link" href="/profileInfo">Profile Info</a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -21,18 +24,8 @@
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <br>
 	  <h2> Welcome, {{full_name}}</h2>
-	  <h2>Change Name</h2>
-	  <form action="/changeName" method="POST" style="display: block;">
-		<input type="hidden" id="id" name="id" value="{{id}}"> </input>
-	    <div class="form-group">
-          <label for="name">New Name:</label>
-		  <input name="name" class="form-control" type="text" placeholder="Enter Your New Name">
-        </div>
-		<div class="form-group">
-		  <input class="btn btn-primary form-control" type="submit" value="Change Name">
-        </div>
-	   </form>
-      <h2>Give an Award</h2>
+      <br>
+	  <h2>Give an Award</h2>
 	  <form action="/addAward" method="POST" style="display: block;">
         <div class="form-group">
           <label for="name">Recipient Name:</label>
@@ -68,6 +61,7 @@
             <th>Recipient Email</th> 
             <th>Award Type</th>
 		    <th>Award Date</th> 
+            <th>Action</th>
     	  </thead>
 		  <tbody>
 		  {{#each awards}}		
@@ -76,12 +70,12 @@
               <td>{{this.recipient_email}}</td>
 		      <td>{{this.type_name}}</td>
               <td>{{this.award_date}}</td>
-			  <td>
-			  		<form action="/deleteAward" method="POST">
-						<input type="hidden" name="id" value={{this.award_id}}>
-						<input type="submit" value="Delete">
-					</form>
-			   </td>
+			  <td width="40">
+			  	<form action="/deleteAward" method="POST">
+				  <input type="hidden" name="id" value={{this.award_id}}>
+				  <button type="submit" class="btn" value="Delete">Delete</button>
+				</form>
+			  </td>
 		    </tr>
 		  {{/each}}
 		  </tbody>

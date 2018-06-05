@@ -1,0 +1,46 @@
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Dashboard</a>
+  <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link active" href="/logout">Log Out</a> 
+      </li>
+    </ul>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item"> 
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item"> 
+            <a class="nav-link active" href="/profileInfo">Profile Info</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <br>
+	  <h2>Welcome, {{full_name}}</h2>
+      <br>
+      <ul class="list-group">
+        <li class="list-group-item"><h5 style="display:inline-block;">Full Name: </h5>  {{full_name}}</li>
+        <li class="list-group-item"><h5 style="display:inline-block;">Email: </h5>  {{email}}</li>
+        <li class="list-group-item"><h5 style="display:inline-block;">Created: </h5>  {{createdAt}}</li>
+      </ul>
+      <br>
+      <h3>Change Name</h3>
+	  <form action="/changeName" method="POST" style="display: block;">
+		<input type="hidden" id="id" name="id" value="{{id}}"> </input>
+	    <div class="form-group"> 
+		  <input name="name" class="form-control" type="text" placeholder="Enter Your New Name">
+        </div>
+		<div class="form-group">
+		  <input class="btn btn-primary form-control" type="submit" value="Change Name">
+        </div>
+	   </form>	      
+    </main>
+  </div>
+</div>

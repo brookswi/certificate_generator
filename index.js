@@ -76,24 +76,38 @@ app.post('/user/register', (req, res) => {
 
 	if (req.body.type == "regular")
 	{
-		// Save the new user 
-		User.create({
-			full_name: req.body.name,
-			email: req.body.email,
-			passwrd: req.body.password
-		}).then(user => {
-			req.session.user = user.dataValues; 
-			return res.redirect('/dashboard');
-		});
-	}
+        User.findOne({ where: { email: req.body.email } }).then(function (user) { 
+			if (user) {
+				res.redirect('/registerFail'); 
+			} else { 
+                // Save the new user 
+		        User.create({
+			        full_name: req.body.name,
+			        email: req.body.email,
+			        passwrd: req.body.password
+		        }).then(user => {
+			        req.session.user = user.dataValues; 
+			        return res.redirect('/dashboard');
+		        });
+		    }
+        }); 
+    }
 });
 
 app.get('/login', function (req, res) {
 	res.render('login')
 });
 
+app.get('/loginFail', function (req, res) {
+    res.render('loginFail');
+});
+
 app.get('/register', function (req, res) {
     res.render('register')
+});
+
+app.get('/registerFail', function (req, res) {
+    res.render('registerFail')
 });
 
 app.get('/dashboard', async (req, res) => {
@@ -107,8 +121,23 @@ app.get('/dashboard', async (req, res) => {
     await sequelize.query('SELECT A.award_id, A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT}).then(results => {
         response.awards = results;
     });
-	res.render('dashboard', response)
+	res.render('dashboard', response);
 });
+
+app.get('/profileInfo', async (req, res) => {
+    var response = {},
+        userID = req.session.user.user_id;
+    response.id = userID;
+    await sequelize.query('SELECT * FROM reg_user WHERE user_id = ?', {replacements: [userID], type: sequelize.QueryTypes.SELECT})
+	.then(results => {
+		response.full_name = results[0].full_name;
+        response.email = results[0].email;
+        response.createdAt = results[0].createdAt;
+	});
+    res.render('profile', response);
+});
+    
+
 
 app.get('/adminDashboard', async (req, res) => {
 	var response = {};
@@ -243,7 +272,7 @@ app.post('/changeName', (req, res) => {
 	var name = req.body.name;
 	var id = req.body.id;
 	sequelize.query('UPDATE reg_user SET full_name = ? WHERE user_id = ?', { replacements: [name, id]}).then(() => {        
-			return res.redirect('/dashboard'); 
+			return res.redirect('/profileInfo'); 
 		});   
 });
 
@@ -322,10 +351,9 @@ app.post('/user/login', (req, res) => {
 	{     
 		User.findOne({ where: { email: email, passwrd: password } }).then(function (user) {
 			if (!user) {
-				res.redirect('/login');
+				res.redirect('/loginFail');
 			} else {
 				req.session.user = user.dataValues;
-				console.log(req.session.user)
 				res.redirect('/dashboard');
 			}
 		});
@@ -334,7 +362,7 @@ app.post('/user/login', (req, res) => {
 	{ 
 		adminUser.findOne({ where: {email: email, passwrd: password } }).then(function (user) {
 			if (!user) {
-				res.redirect('/login');
+				res.redirect('/loginFail');
 			} else {
 				req.session.user = user.dataValues;               
 				console.log(req.session.user);
