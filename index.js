@@ -14,6 +14,12 @@ var nodemailer = require('nodemailer');
 var multer = require('multer');
 const path = require("path");
 const fs = require("fs");
+var jsonWrapper = require('./util/jsonWrapper.js');
+var jsonToTexWrapper = require('./util/jsonToTexWrapper.js');
+var pdfLatexWrapper = require('./util/pdfLatexWrapper.js');
+var nodemailerWrapper = require('./util/nodemailerWrapper.js');
+var imageFileWrapper = require('./util/imageFileWrapper.js');
+var removeFileWrapper = require('./util/removeFileWrapper.js');
 
 //configure app
 var app = express();
@@ -386,11 +392,82 @@ app.post('/addAward', (req, res) => {
 		award_date: req.body.date,
 		type: awardID,
 		user_id: userID,
-	}).then(() => { 
-		return res.redirect('/dashboard');
-	});
-
-
+	}).then(awrd => {
+			var rawSQL = "SELECT award.recipient, " +
+					"award.award_id, " +
+					"award.award_date, " +
+					"award.email, " +
+					"award.type, " +
+					"reg_user.full_name, " +
+					"reg_user.signature_id, " +
+					"signature.signature_name, " +
+					"signature.img_file " +
+					"FROM award " +
+					"INNER JOIN reg_user ON award.user_id = reg_user.user_id " +
+					"INNER JOIN signature ON reg_user.signature_id = signature.signature_id " +
+					"WHERE award.award_id = ?";
+			return sequelize.query(rawSQL, {replacements: [awrd.dataValues.award_id], type: sequelize.QueryTypes.SELECT});
+		}).then(certificate =>{
+			// create a Buffer object to store the buffer from the database
+			const buf = Buffer.from(certificate[0].img_file, 'base64');
+			var type_name = "default";
+			switch(certificate[0].type){
+				case 1:
+				type_name = "bronze";
+				break;
+				case 2:
+				type_name = "silver";
+				break;
+				case 3:
+				type_name = "gold";
+				break;
+				case 4:
+				type_name = "diamond";
+				break;
+			}
+			
+			var certJSON = {
+				"recipient": certificate[0].recipient,
+				"award_date": certificate[0].award_date,
+				"img_file": certificate[0].signature_name,
+				"type_name": type_name,
+				"full_name": certificate[0].full_name
+			};
+			var stringJson = JSON.stringify(certJSON);
+			var inputFileName = 'certJSON_' + certificate[0].award_id + '.json';
+			var outputFileName = 'cert_' + certificate[0].award_id + '.tex';
+			var pdfFileName = 'cert_' + certificate[0].award_id + '.pdf';
+			var logFile = 'cert_' + certificate[0].award_id + '.log';
+			var auxFile = 'cert_' + certificate[0].award_id + '.aux';
+			var fileObj = {
+				input_file: inputFileName,
+				output_file: outputFileName,
+				pdf_file: pdfFileName,
+				log_file: logFile,
+				aux_file: auxFile,
+				recipient_email: certificate[0].email,
+				img_buffer: buf,
+				sig_name: certificate[0].signature_name
+			};
+			return jsonWrapper(stringJson, fileObj);
+		}).then(fileObj => {
+			return imageFileWrapper(fileObj);
+		}).then(fileObj => {
+			return jsonToTexWrapper(fileObj);
+		}).then(fileObj => {
+			return pdfLatexWrapper(fileObj);
+		}).then(fileObj => {
+			return nodemailerWrapper(fileObj);
+		}).then(fileObj =>{
+			return removeFileWrapper(fileObj);
+		}).then(fileObj =>
+			console.log(fileObj);
+			return res.redirect('/dashboard');
+		}).catch(function(error){
+			console.log(error);
+			// I think I should redirect to an error page
+			return res.redirect('/dashboard');
+		});
 });
 
 app.post('/user/forgot', (req, res) => {
