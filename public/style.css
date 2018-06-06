@@ -19,7 +19,7 @@ hr {
     border-color: white;
 }
 
-.login-page {
+.login-page, .register-page {
     background-color: rgba(229, 228, 255, 0.2); 
     border-radius: 25px;
 }
@@ -37,7 +37,7 @@ label {
     /* Full height */
     height: 100%; 
 
-    /* Center and scale the image nicely */
+    /* Center and scale the image nicely */ 
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

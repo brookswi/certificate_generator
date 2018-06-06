@@ -44,27 +44,107 @@
           <tbody id="awardTable"> 
           {{#each awards}}
             <tr>
-              <td>{{this.recipient}}
-              <td>{{this.recipient_email}}
-              <td>{{this.award_date}}
-              <td>{{this.type_name}}  
-              <td>{{this.full_name}}
-              <td>{{this.sender_email}}
+              <td>{{this.recipient}}</td>
+              <td>{{this.recipient_email}}</td>
+              <td>{{this.award_date}}</td>
+              <td>{{this.type_name}}</td>  
+              <td>{{this.full_name}}</td>
+              <td>{{this.sender_email}}</td>
           {{/each}} 
           </tbody>
         </table> 
       </div>
+      <br>
+   
       <!-- Credit: https://www.w3schools.com/bootstrap/bootstrap_filters.asp --> 
       <script>
         $(document).ready(function() {
           $("#searchInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#awardTable tr").filter(function() {
-              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1) 
             });
+            drawChart();
           });
         });
       </script>
+      <!-- End Credit -->
+
+ 
+      <!-- Credit: https://www.w3schools.com/howto/howto_google_charts.asp -->
+      <div class="row">
+        <div class="col-6">
+          <div id="typePieChart"></div>
+        </div>
+        <div class="col-6">
+          <div id="emailPieChart"></div>
+        </div>
+      </div>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> 
+      <script type="text/javascript">
+        // Load google charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Draw the chart and set the chart values
+        function drawChart() {
+            var dataValues = {};
+            dataValues.bronze = 0;
+            dataValues.silver = 0;
+            dataValues.gold = 0;
+            dataValues.diamond = 0;
+            dataValues.givenBy = {};
+
+            var awardTable = document.getElementById("awardTable"); 
+            for (var i = 0; i < awardTable.rows.length; i++)
+            {
+                var awardType = String(awardTable.rows[i].cells[3].textContent);  
+                var givenByEmail = String(awardTable.rows[i].cells[5].textContent);
+                if (awardTable.rows[i].style.display == "none") {
+                    continue;
+                }
+                else if (awardType == "Bronze") { 
+                    dataValues['bronze']++;
+                }
+                else if (awardType == "Silver") {
+                    dataValues['silver']++;
+                }
+                else if (awardType == "Gold") {
+                    dataValues['gold']++;
+                }
+                else if (awardType == "Diamond") {
+                    dataValues['diamond']++;
+                }
+                dataValues.givenBy[givenByEmail] = (dataValues.givenBy[givenByEmail]+1) || 1;
+            }
+
+            var typeData = google.visualization.arrayToDataTable([
+                ['Award Type', 'Number Given'],
+                ['Bronze', dataValues.bronze],
+                ['Silver', dataValues.silver],
+                ['Gold', dataValues.gold],
+                ['Diamond', dataValues.diamond] 
+            ]);
+
+            var emailData = new google.visualization.DataTable();
+            emailData.addColumn('string', 'Given By');
+            emailData.addColumn('number', 'Number Given');
+            for (var key in dataValues.givenBy)
+            { 
+                emailData.addRow([key, dataValues.givenBy[key]]);
+            }
+ 
+            var typeOptions = {'title':'Awards by Type', 'width':600, 'height':500};
+            var emailOptions = {'title':'Awards by Creator', 'width':600, 'height':500};
+
+            // Display the chart inside the <div> element with id="piechart"
+            var typeChart = new google.visualization.PieChart(document.getElementById('typePieChart'));
+            var emailChart = new google.visualization.PieChart(document.getElementById('emailPieChart'));
+            typeChart.draw(typeData, typeOptions);
+            emailChart.draw(emailData, emailOptions);
+        }
+      </script>
+      <!-- End Credit -->
     </main>
   </div>
 </div>

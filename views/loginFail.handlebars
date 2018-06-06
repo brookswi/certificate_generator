@@ -1,43 +1,52 @@
-<div class="container-fluid"> 
-  <div class="row" style="height:150px">
-    <div class="col align-self-center">
-      <h1 class="display-4 text-center">Employee Award Recognition</h1><br>
-    </div> 
-  </div>
-  <div class="row" style="height:80%;"> 
-    <div class="col-6 align-self-center"> 
-      <img class="img-thumbnail" src="/images/frontpage2.jpg" alt="Front Page" style="height:auto; width:100%"></img>  
+<div class="bg-img">
+  <div class="container-fluid"> 
+    <div class="row" style="height:150px">
+      <div class="col align-self-center">
+        <h1 class="display-3 text-center text-white">Certificate Generator</h1><br>
+      </div> 
     </div>
-    <div class="col-6 align-self-center">
-      <h2>Login</h2><br>
-      <form action="/user/login" method="POST" class="login-form" style="display: block;">
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input name="email" type="email" class="form-control" id="email" placeholder="Enter email"> 
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label> 
-	      <input name="password" type="password" class="form-control" id="passwrd" placeholder="Enter password"> 
-        </div>
-        <div class="form-group"> 
-          <select class="form-control" name="type" required>
-            <option value="" selected>Select a user type</option>
-            <option value="regular">Regular</option>
-            <option value="admin">Admin</option>
-          </select> 
-        </div> 
-        <div class="form-group">
-          <input class="btn btn-primary form-control" type="submit" value="Login">
-        </div> 
-        <h6>Email and/or password not found. Please try again.</h6>
-      </form> 
-      <a href="/register" style="font-size:25px;">Click here to register an account</a>
-      <br><br> 
-      <form class="form-inline" action="/user/forgot" method="POST" style="display: block;">   
-        <h5 style="display:inline-block;">Forgot Password?</h5>
-        <input name="email" type="email" class="form-control" placeholder="Email">
-        <input class="btn btn-primary" type="submit" value="Submit">
-      </form>
+    <div class="row align-items-center" style="height:80%;"> 
+      <div class="col-1"></div>
+      <div class="col-4">
+        <h1 class="display-5 text-center text-white font-weight-light">Make your own personalized certificates!</h1>   
+        <hr>
+        <p class="text-white p-large text-center">Our site allows you to create personalized certificates for the people you care about. All you have to do is select a design, enter the relevant certificate information along with the email of the recipient, and then our site will automatically generate a personalized certificate and send it to the email you provided. Login or sign up now to get started!</p>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-5 align-self-center login-page">
+        <br>
+        <h2 class="text-white">Login</h2><br>
+        <form action="/user/login" method="POST" class="login-form" style="display: block;">
+          <div class="form-group">
+            <label for="email" class="text-white">Email:</label>
+            <input name="email" type="email" class="form-control" id="email" placeholder="Enter email" required> 
+          </div>
+          <div class="form-group">
+            <label for="password" class="text-white">Password:</label> 
+	        <input name="password" type="password" class="form-control" id="passwrd" placeholder="Enter password" required> 
+          </div>
+          <div class="form-group"> 
+            <select class="form-control" name="type" required>
+              <option value="" selected>Select a user type</option>
+              <option value="regular">Regular</option>
+              <option value="admin">Admin</option>
+            </select> 
+          </div> 
+          <div class="form-group">
+            <input class="btn btn-primary form-control" type="submit" value="Login">
+          </div> 
+          <h6 class="text-white">Email and/or password not found. Please try again.</h6>
+        </form> 
+        <a href="/register" style="font-size:25px" class="text-white font-weight-light">Click here to register an account</a>
+        <br><br> 
+        <form class="form-inline" action="/user/forgot" method="POST" style="display: block;">   
+          <h4 style="display:inline-block; padding-right:10px;" class="text-white">Forgot Password?</h5>
+          <input name="email" type="email" class="form-control" placeholder="Email">
+          <input class="btn btn-primary" type="submit" value="Submit">
+        </form>
+        <br>
+      </div> 
+      <div class="col-1"></div>
     </div>
   </div>
 </div>
