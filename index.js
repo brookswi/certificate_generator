@@ -12,6 +12,7 @@ var award = require('./models/user').award;
 var nodemailer = require('nodemailer');
 var multer = require('multer');
 const path = require("path");
+const fs = require("fs");
 
 //configure app
 var app = express();
@@ -267,10 +268,27 @@ app.post('/adminUser/action', (req, res) => {
 	{
 		if (type == "regular")
 		{
-			sequelize.query('DELETE FROM reg_user WHERE user_id = ' + id, { type: sequelize.QueryTypes.DELETE }).then(() => 
+			sequelize.query("SELECT signature_name FROM reg_user WHERE user_id = ?", { replacements: [id], type: sequelize.QueryTypes.SELECT})
+			.then(user => {
+				//console.log(user);
+				//console.log(user[0].signature_name);
+				if (user[0].signature_name !== null){
+					return new Promise(function(resolve, reject){
+						fs.unlink("./signature_images/"+user[0].signature_name, (err) =>{
+						if (err) reject(err);
+						resolve(id);
+						});
+					});
+				}
+				else{
+					return id;
+				}
+			}).then(id =>{
+				sequelize.query('DELETE FROM reg_user WHERE user_id = ?', { replacements: [id], type: sequelize.QueryTypes.DELETE }).then(() => 
 				{       
 					return res.redirect('/manageReg'); 
-				});         
+				}); 
+			});			
 		}
 		else if (type == "admin")
 		{
