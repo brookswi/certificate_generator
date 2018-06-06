@@ -63,7 +63,7 @@ var transporter = nodemailer.createTransport({
 
  // handle image upload
 const storage = multer.diskStorage({
-  destination: 'signature_images',
+  destination: './signature_images',
   filename: function (req, file, callback) {
 	callback(null, Date.now() + "_" + file.originalname);
   }
@@ -111,6 +111,7 @@ app.post('/user/register', (req, res) => {
 			return res.redirect('/registerFail?error=3'); 
 		}
 		else{
+			console.log(req.file);
 			User.create({
 			full_name: req.body.name,
 			email: req.body.email,
@@ -270,8 +271,8 @@ app.post('/adminUser/action', (req, res) => {
 		{
 			sequelize.query("SELECT signature_name FROM reg_user WHERE user_id = ?", { replacements: [id], type: sequelize.QueryTypes.SELECT})
 			.then(user => {
-				//console.log(user);
-				//console.log(user[0].signature_name);
+				console.log(user);
+				console.log(user[0].signature_name);
 				if (user[0].signature_name !== null){
 					return new Promise(function(resolve, reject){
 						fs.unlink("./signature_images/"+user[0].signature_name, (err) =>{
