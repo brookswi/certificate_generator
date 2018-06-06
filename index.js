@@ -284,10 +284,11 @@ app.post('/adminUser/action', (req, res) => {
 					return id;
 				}
 			}).then(id =>{
-				sequelize.query('DELETE FROM reg_user WHERE user_id = ?', { replacements: [id], type: sequelize.QueryTypes.DELETE }).then(() => 
-				{       
-					return res.redirect('/manageReg'); 
-				}); 
+				return sequelize.query("DELETE FROM award WHERE user_id= ?", { replacements: [id], type: sequelize.QueryTypes.DELETE});
+			}).then(result => {
+				return sequelize.query('DELETE FROM reg_user WHERE user_id = ?', { replacements: [id], type: sequelize.QueryTypes.DELETE });
+			}).then(result => {
+				return res.redirect('/manageReg'); 
 			});			
 		}
 		else if (type == "admin")
