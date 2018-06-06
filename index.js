@@ -166,14 +166,22 @@ app.get('/dashboard', async (req, res) => {
 	var response = {},
 		userID = req.session.user.user_id;
 	response.id = userID;
-	await sequelize.query('SELECT full_name FROM reg_user WHERE user_id = ?', {replacements: [userID], type: sequelize.QueryTypes.SELECT})
-	.then(results => {
-		response.full_name = results[0].full_name;
-	});
-    await sequelize.query('SELECT A.award_id, A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT}).then(results => {
-        response.awards = results;
-    });
-	res.render('dashboard', response);
+	if (userID === null){
+		res.redirect('/');
+	}
+	else{
+		sequelize.query('SELECT full_name FROM reg_user WHERE user_id = ?', {replacements: [userID], type: sequelize.QueryTypes.SELECT})
+		.then(results => {
+			response.full_name = results[0].full_name;
+			return sequelize.query('SELECT A.award_id, A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT});})
+		.then(results => {
+			response.awards = results;
+			res.render('dashboard', response);
+		}).catch(function(error){
+			console.log(error);
+			res.redirect('/');
+		});
+	}
 });
 
 app.get('/profileInfo', async (req, res) => {
@@ -289,6 +297,9 @@ app.post('/adminUser/action', (req, res) => {
 			}).then(result => {
 				return sequelize.query('DELETE FROM reg_user WHERE user_id = ?', { replacements: [id], type: sequelize.QueryTypes.DELETE });
 			}).then(result => {
+				return res.redirect('/manageReg'); 
+			}).catch(function(error){
+				console.log(error);
 				return res.redirect('/manageReg'); 
 			});			
 		}
