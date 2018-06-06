@@ -460,7 +460,7 @@ app.post('/addAward', (req, res) => {
 			return nodemailerWrapper(fileObj);
 		}).then(fileObj =>{
 			return removeFileWrapper(fileObj);
-		}).then(fileObj =>
+		}).then(fileObj =>{
 			console.log(fileObj);
 			return res.redirect('/dashboard');
 		}).catch(function(error){
