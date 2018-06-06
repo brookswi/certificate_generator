@@ -36,8 +36,18 @@ var User = sequelize.define('reg_user', {
 	passwrd: {
 		type: Sequelize.STRING,
 	},
-	signature_name: {
-		type: Sequelize.STRING,
+	signature_id: {
+		type: Sequelize.INTEGER,
+		references: {
+     		// This is a reference to another model
+     			model: "signature",
+
+     		// This is the column name of the referenced model
+     			key: 'signature_id',
+
+     		// This declares when to check the foreign key constraint. PostgreSQL only.
+     			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+   		}
 	}
 },{
 	tableName: 'reg_user'
@@ -101,6 +111,22 @@ var award = sequelize.define('award', {
 	tableName: 'award'
 });
 
+var signature = sequelize.define('signature', { 
+	signature_id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true
+	},
+	signature_name: {
+		type: Sequelize.STRING,
+	},
+	img_file: {
+		type: Sequelize.BLOB,
+	},
+}, {
+	tableName: 'signature'
+});
+
 
 // create all the defined tables in the specified database.
 sequelize.sync()
@@ -115,5 +141,5 @@ sequelize.sync()
 
 
 // export User models for use in other files.
-module.exports = {User, adminUser, award, sequelize};
+module.exports = {User, adminUser, award, sequelize, signature};
 

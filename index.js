@@ -9,6 +9,7 @@ var User = require('./models/user').User;
 var adminUser = require('./models/user').adminUser;
 var sequelize = require('./models/user').sequelize;
 var award = require('./models/user').award;
+var signature = require('./models/user').signature;
 var nodemailer = require('nodemailer');
 var multer = require('multer');
 const path = require("path");
@@ -61,13 +62,8 @@ var transporter = nodemailer.createTransport({
     }
 });
 
- // handle image upload
-const storage = multer.diskStorage({
-  destination: './signature_images',
-  filename: function (req, file, callback) {
-	callback(null, Date.now() + "_" + file.originalname);
-  }
-});
+ // handle image upload: using memoryStorage to get the buffer
+const storage = multer.memoryStorage();
 
 var upload = multer({storage: storage, 
 	fileFilter: function (req, file, cb) {
@@ -81,6 +77,7 @@ var upload = multer({storage: storage,
 					req.passwordsDoNotMatchError = "Passwords do not match";
 					cb(null, false, new Error("Passwords do not match"));
 				}
+				
 				else if (path.extname(file.originalname).toLowerCase() !== ".png"){
 					req.incorrectFileTypeError = "Image is not png file";
 					cb(null, false, new Error("Image is not png file"));
@@ -111,15 +108,25 @@ app.post('/user/register', (req, res) => {
 			return res.redirect('/registerFail?error=3'); 
 		}
 		else{
-			console.log(req.file);
-			User.create({
-			full_name: req.body.name,
-			email: req.body.email,
-			passwrd: req.body.password,
-			signature_name: req.file.filename
+			// create Signature
+			filename = Date.now() + "_" + req.file.originalname;
+			sequelize.query("INSERT INTO signature (signature_name, img_file) VALUES (?, ?)", {replacements: [filename, req.file.buffer]})
+			.then(signature => {
+				return sequelize.query("SELECT signature_id FROM signature WHERE signature_name = ?", {replacements: [filename], type: sequelize.QueryTypes.SELECT});
+			}).then(signature => {
+				// create User
+				return User.create({
+					full_name: req.body.name,
+					email: req.body.email,
+					passwrd: req.body.password,
+					signature_id: signature[0].signature_id
+				});
 			}).then(user => {
 				req.session.user = user.dataValues; 
 				return res.redirect('/dashboard');
+			}).catch(function(err){
+				console.log(err);
+				return res.redirect('/');
 			});
 		}
 	});
@@ -265,38 +272,25 @@ app.post('/adminUser/addUser', (req, res) => {
 
 
 app.post('/adminUser/action', (req, res) => {
-
 	var action = req.body.action, 
 		name = req.body.name,
 		email = req.body.email, 
 		type = req.body.type,
-		id = req.body.id;
+		id = req.body.id,
+		signature_id = req.body.signature_id;
 
 	// Delete user
 	if (action == "Delete")
 	{
 		if (type == "regular")
 		{
-			sequelize.query("SELECT signature_name FROM reg_user WHERE user_id = ?", { replacements: [id], type: sequelize.QueryTypes.SELECT})
-			.then(user => {
-				console.log(user);
-				console.log(user[0].signature_name);
-				if (user[0].signature_name !== null){
-					return new Promise(function(resolve, reject){
-						fs.unlink("./signature_images/"+user[0].signature_name, (err) =>{
-						if (err) reject(err);
-						resolve(id);
-						});
-					});
-				}
-				else{
-					return id;
-				}
-			}).then(id =>{
-				return sequelize.query("DELETE FROM award WHERE user_id= ?", { replacements: [id], type: sequelize.QueryTypes.DELETE});
-			}).then(result => {
+			// delete award, then user, then signature
+			sequelize.query("DELETE FROM award WHERE user_id= ?", { replacements: [id], type: sequelize.QueryTypes.DELETE})
+			.then(result => {
 				return sequelize.query('DELETE FROM reg_user WHERE user_id = ?', { replacements: [id], type: sequelize.QueryTypes.DELETE });
 			}).then(result => {
+				return sequelize.query("DELETE FROM signature WHERE signature_id = ?", { replacements: [signature_id], type: sequelize.QueryTypes.SELECT});
+			}).then(result =>{
 				return res.redirect('/manageReg'); 
 			}).catch(function(error){
 				console.log(error);
