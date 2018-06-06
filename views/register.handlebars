@@ -16,7 +16,7 @@
       <div class="col-5 align-self-center register-page">
         <br>
         <h2 class="text-white">Register</h2>
-        <form action="/user/register" method="POST" class="register-form" style="display: block;">
+        <form action="/user/register" method="POST" enctype="multipart/form-data" class="register-form" style="display: block;">
           <div class="form-group">
             <label for="name" class="text-white">Full Name:</label>
             <input name="name" type="text" class="form-control" id="name" placeholder="First & Last Name" required>
@@ -33,6 +33,10 @@
             <label for="passwordConfirmation" class="text-white">Confirm Password:</label> 
 	        <input name="passwordConfirmation" type="password" class="form-control" id="passwordConfirmation" placeholder="Confirm password" required> 
           </div>
+		  <div class="form-group">
+			<label for="imgUploader">Signature Upload (.png files only):</label> 
+			<input type="file" name="imgUploader" id="imgUploader" required/>
+		  </div>
           <div class="form-group">
             <input class="btn btn-primary form-control" type="submit" value="Create Account">
           </div> 

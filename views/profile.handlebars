@@ -35,12 +35,20 @@
 	  <form action="/changeName" method="POST" style="display: block;">
 		<input type="hidden" id="id" name="id" value="{{id}}"> </input>
 	    <div class="form-group"> 
-		  <input name="name" class="form-control" type="text" placeholder="Enter Your New Name">
+		  <input name="name" class="form-control" type="text" placeholder="Enter Your New Name" required>
         </div>
 		<div class="form-group">
 		  <input class="btn btn-primary form-control" type="submit" value="Change Name">
         </div>
-	   </form>	      
+	   </form>
+	   <h3>Change Signature (.png files only)</h3>
+		<div class="form-group">
+			<form id="frmUploader" enctype="multipart/form-data" action="/changeSignature" method="post">
+				<input type="hidden" id="id" name="id" value="{{id}}"> </input>
+				<input type="file" name="imgUploader" required/>
+				<input type="submit" name="submit" id="btnSubmit" value="Upload" /> 
+			</form>	 
+		</div>  
     </main>
   </div>
 </div>

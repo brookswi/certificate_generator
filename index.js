@@ -10,6 +10,8 @@ var adminUser = require('./models/user').adminUser;
 var sequelize = require('./models/user').sequelize;
 var award = require('./models/user').award;
 var nodemailer = require('nodemailer');
+var multer = require('multer');
+const path = require("path");
 
 //configure app
 var app = express();
@@ -58,44 +60,71 @@ var transporter = nodemailer.createTransport({
     }
 });
 
+ // handle image upload
+const storage = multer.diskStorage({
+  destination: 'signature_images',
+  filename: function (req, file, callback) {
+	callback(null, Date.now() + "_" + file.originalname);
+  }
+});
+
+var upload = multer({storage: storage, 
+	fileFilter: function (req, file, cb) {
+		sequelize.query('SELECT email FROM reg_user WHERE email = ?', {replacements: [req.body.email], type: sequelize.QueryTypes.SELECT})
+			.then(user => {
+				if (user.length) {
+					req.emailInUseError = "Email already in use";
+					cb(null, false, new Error("Email already in use"));
+				}
+				else if(req.body.password !== req.body.passwordConfirmation) {
+					req.passwordsDoNotMatchError = "Passwords do not match";
+					cb(null, false, new Error("Passwords do not match"));
+				}
+				else if (path.extname(file.originalname).toLowerCase() !== ".png"){
+					req.incorrectFileTypeError = "Image is not png file";
+					cb(null, false, new Error("Image is not png file"));
+				}
+				else{ 
+					cb(null, true);
+				}
+			});
+	}
+}).single('imgUploader');
 
 // Handle form for registration
 app.post('/user/register', (req, res) => {
-    console.log(req.body);
-	if (req.body.password !== req.body.passwordConfirmation) {
-		return res.render('index', {
-			errors: ['Password and password confirmation do not match'],
-		});
-	}
-	if (req.body.password.length < 1) {
-		const err = 'Bad password';
-		return res.render('index', {
-			errors: [err],
-		});
-	}
-
-	if (req.body.type == "regular")
-	{
-        User.findOne({ where: { email: req.body.email } }).then(function (user) { 
-			if (user) {
-				res.redirect('/registerFail'); 
-			} else { 
-                // Save the new user 
-		        User.create({
-			        full_name: req.body.name,
-			        email: req.body.email,
-			        passwrd: req.body.password
-		        }).then(user => {
-			        req.session.user = user.dataValues; 
-			        return res.redirect('/dashboard');
-		        });
-		    }
-        }); 
-    }
+	upload(req, res, function(err){
+		// there's a weird bug where if one of the error cases happen below and it redirects back to a
+		// page with a form, then in subsequent posts, req.file will be undefined
+		// I could not figure out a fix but I did make a workaround by redesigning the registerFail page
+		if (req.emailInUseError){
+			console.log(err);
+			return res.redirect('/registerFail?error=1'); 
+		}
+		else if (req.passwordsDoNotMatchError){
+			console.log(err);
+			return res.redirect('/registerFail?error=2'); 
+		}
+		else if (req.incorrectFileTypeError){
+			console.log(err);
+			return res.redirect('/registerFail?error=3'); 
+		}
+		else{
+			User.create({
+			full_name: req.body.name,
+			email: req.body.email,
+			passwrd: req.body.password,
+			signature_name: req.file.filename
+			}).then(user => {
+				req.session.user = user.dataValues; 
+				return res.redirect('/dashboard');
+			});
+		}
+	});
 });
 
 app.get('/login', function (req, res) {
-	res.render('login')
+	res.render('login');
 });
 
 app.get('/loginFail', function (req, res) {
@@ -103,11 +132,32 @@ app.get('/loginFail', function (req, res) {
 });
 
 app.get('/register', function (req, res) {
-    res.render('register')
+    res.render('register');
 });
 
 app.get('/registerFail', function (req, res) {
-    res.render('registerFail')
+	var response = {};
+	response.redirectUrl = '/register';
+	switch(req.query.error)
+	{
+		case '1':
+			response.error = "That email is already taken. Please try again.";
+			break;
+		case '2':
+			response.error = "Password and password confirmation do not match";
+			break;
+		case '3':
+			response.error = "Only .png files are allowed!";
+			break;
+		case '4':
+			response.error = "File Upload failed. Navigate back to the login page and try registering again.";
+			break;
+		default:
+			response.error = "Oops, something went wrong.";
+			break;
+	}
+	
+    res.render('registerFail', response);
 });
 
 app.get('/dashboard', async (req, res) => {
@@ -371,6 +421,29 @@ app.post('/user/login', (req, res) => {
 		}); 
 	}    
 });
+
+/* ***COMING BACK TO THIS LATER***
+//app.post('/changeSignature', upload.single('imgUploader'), (req, res) => {
+app.post('/changeSignature', (req, res) => {
+	// query for user with id to get filename
+	// delete old signature image
+	// update database with new file name
+	// should return 404 page on failure
+	if (!req.file) {
+		console.log("No file received");
+		return res.send({
+		  success: false
+		});
+	  } 
+	else {
+		console.log('file received');
+		console.log(req.file.path);
+		return res.send({
+		  success: true
+		});
+	}
+});
+*/
 
 app.get('/logout', (req, res) => {
 	if (req.session.user && req.cookies.user_sid) {

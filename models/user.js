@@ -35,6 +35,9 @@ var User = sequelize.define('reg_user', {
 	},
 	passwrd: {
 		type: Sequelize.STRING,
+	},
+	signature_name: {
+		type: Sequelize.STRING,
 	}
 },{
 	tableName: 'reg_user'

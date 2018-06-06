@@ -1,0 +1,16 @@
+<h1>Login</h1>
+
+<div> 
+	<form class="login" action="/user/login" method="POST" class="login-form" style="display: block;">
+		<input name="email" type="email" class="text-input" placeholder="Email" required>
+		<input name="password" type="password" class="text-input" placeholder="Password" required>
+        <select name = "type" required>
+            <option value="" selected>Select a user type</option>
+            <option value="regular">Regular</option>
+            <option value="admin">Admin</option>
+        </select>
+		<input class="login-submit" type="submit">
+	</form>
+    <p>Invalid login. Please try again</p>
+</div>
+
