@@ -7,7 +7,7 @@ body {
   height: 100%;
 }
 
-html {
+html { 
     height: 100%;
 }
 
@@ -28,21 +28,31 @@ label {
     font-size: large;
 }
 
-.bg-img { 
-    /* The image used */
-    /*background-image: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full page/img(20).jpg");*/
-    /*background-image: url("http://mdbootstrap.com/img/Photos/Others/img%20(42).jpg");*/
-    background-image: url("/images/building.jpg"); 
+/* Credit: https://css-tricks.com/perfect-full-page-background-image/*/
+img.bg-img { 
 
-    /* Full height */
-    height: 100%; 
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+    
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+    
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+} 
 
-    /* Center and scale the image nicely */ 
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}  
 
+@media screen and (max-width: 1024px) { /* Specific to this particular image */
+  img.bg-img {
+    left: 50%;
+    margin-left: -512px;   /* 50% */
+  }
+}
+/* End Credit */
 
 .feather {
   width: 16px;

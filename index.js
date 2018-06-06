@@ -265,7 +265,7 @@ app.post('/adminUser/addUser', (req, res) => {
 		});
 	}
 	else if (req.body.type == "admin")
-	{
+	{ 
 		// Save the new admin user
 		adminUser.create({ 
 			email: req.body.email,
