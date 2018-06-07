@@ -54,16 +54,8 @@ img.bg-img {
 }
 /* End Credit */
 
-.feather {
-  width: 16px;
-  height: 16px;
-  vertical-align: text-bottom;
-}
-
-/*
- * Sidebar
- */
-
+/* Credit: https://getbootstrap.com/docs/4.1/examples/dashboard/ */
+/* All of the following CSS was borrowed from relevant parts of the example at the above link */
 .sidebar {
   position: fixed;
   top: 0;
@@ -104,7 +96,7 @@ img.bg-img {
   color: #007bff;
 }
 
-.sidebar .nav-link:hover .feather,
+.sidebar .nav-link:hover .feather,,
 .sidebar .nav-link.active .feather {
   color: inherit;
 }
@@ -162,4 +154,4 @@ img.bg-img {
 .border-top { border-top: 1px solid #e5e5e5; }
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
 
-
+/* End Credit */

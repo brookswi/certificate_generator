@@ -138,9 +138,6 @@ app.post('/user/register', (req, res) => {
 	});
 });
 
-app.get('/login', function (req, res) {
-	res.render('login');
-});
 
 app.get('/loginFail', function (req, res) {
     res.render('loginFail');
@@ -179,16 +176,25 @@ app.get('/dashboard', async (req, res) => {
 	var response = {},
 		userID = req.session.user.user_id;
 	response.id = userID;
-	if (userID === null){
+
+    // User not signed in
+	if (userID === null) {
 		res.redirect('/');
 	}
-	else{
+
+    // User signed in
+	else {
+        // Get user info
 		sequelize.query('SELECT full_name FROM reg_user WHERE user_id = ?', {replacements: [userID], type: sequelize.QueryTypes.SELECT})
 		.then(results => {
 			response.full_name = results[0].full_name;
+
+            // Get info on awards user has given
 			return sequelize.query('SELECT A.award_id, A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT});})
 		.then(results => {
 			response.awards = results;
+
+            // Render dashboard with user info
 			res.render('dashboard', response);
 		}).catch(function(error){
 			console.log(error);
@@ -201,12 +207,16 @@ app.get('/profileInfo', async (req, res) => {
     var response = {},
         userID = req.session.user.user_id;
     response.id = userID;
+
+    // Get user info
     await sequelize.query('SELECT * FROM reg_user WHERE user_id = ?', {replacements: [userID], type: sequelize.QueryTypes.SELECT})
 	.then(results => {
 		response.full_name = results[0].full_name;
         response.email = results[0].email;
         response.createdAt = results[0].createdAt;
 	});
+
+    // Render profile page with user info
     res.render('profile', response);
 });
     
@@ -241,11 +251,15 @@ app.get('/manageAdmin', async (req, res) => {
 
 
 app.post('/adminUser/addUser', (req, res) => {
+
+    // Check that password and password confirmation match
 	if (req.body.password !== req.body.passwordConfirmation) {
 		return res.render('index', {
 			errors: ['Password and password confirmation do not match'],
 		});
 	}
+    
+    // Check for valid password
 	if (req.body.password.length < 1) {
 		const err = 'Bad password';
 		return res.render('index', {
@@ -253,9 +267,10 @@ app.post('/adminUser/addUser', (req, res) => {
 		});
 	}
 
+    // Add regular user
 	if (req.body.type == "regular")
 	{
-		// Save the new user 
+		// Save the new regular user 
 		User.create({
 			full_name: req.body.name,
 			email: req.body.email,
@@ -264,6 +279,8 @@ app.post('/adminUser/addUser', (req, res) => {
 			return res.redirect('/manageReg');
 		});
 	}
+
+    // Add admin user
 	else if (req.body.type == "admin")
 	{ 
 		// Save the new admin user
@@ -288,9 +305,10 @@ app.post('/adminUser/action', (req, res) => {
 	// Delete user
 	if (action == "Delete")
 	{
+        // Regular User
 		if (type == "regular")
 		{
-			// delete award, then user, then signature
+			// Delete award, then user, then signature
 			sequelize.query("DELETE FROM award WHERE user_id= ?", { replacements: [id], type: sequelize.QueryTypes.DELETE})
 			.then(result => {
 				return sequelize.query('DELETE FROM reg_user WHERE user_id = ?', { replacements: [id], type: sequelize.QueryTypes.DELETE });
@@ -303,6 +321,8 @@ app.post('/adminUser/action', (req, res) => {
 				return res.redirect('/manageReg'); 
 			});			
 		}
+
+        // Admin User
 		else if (type == "admin")
 		{
 			sequelize.query('DELETE FROM admin_user WHERE admin_id = ' + id, { type: sequelize.QueryTypes.DELETE }).then(() => 
@@ -315,6 +335,7 @@ app.post('/adminUser/action', (req, res) => {
 	// Edit user
 	if (action == "Edit")
 	{
+        // Regular User
 		if (type == "regular")
 		{
 			sequelize.query('UPDATE reg_user SET full_name = \'' + name + '\', email = \'' + email + '\' WHERE user_id = \'' + id + '\'', { 
@@ -322,6 +343,8 @@ app.post('/adminUser/action', (req, res) => {
 					return res.redirect('/manageReg'); 
 				});         
 		}
+
+        // Admin User
 		else if (type == "admin")
 		{
 			sequelize.query('UPDATE admin_user SET email = \'' + email + '\' WHERE admin_id = \'' + id + '\'', { 
@@ -330,19 +353,14 @@ app.post('/adminUser/action', (req, res) => {
 				});         
 		}
 	}
-
-	// Account summary
-	if (action == "Account Summary")
-	{
-		res.redirect('/accountSum/?id=' + id);
-	}
-
 });
 
 
 
 app.get('/awardHistory', async (req, res) => {
     var response = {};
+
+    // Get all awards
     await sequelize.query('SELECT A.recipient, A.email AS recipient_email, A.award_date, AT.type_name, RU.full_name, RU.email AS sender_email FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id INNER JOIN reg_user RU ON A.user_id = RU.user_id', {type: sequelize.QueryTypes.SELECT}).then(results => {
         response.awards = results;
     });
@@ -499,6 +517,7 @@ app.post('/user/login', (req, res) => {
 		password = req.body.password,
 		type = req.body.type; 
 
+    // Regular user
 	if (type == "regular")
 	{     
 		User.findOne({ where: { email: email, passwrd: password } }).then(function (user) {
@@ -510,6 +529,8 @@ app.post('/user/login', (req, res) => {
 			}
 		});
 	}
+
+    // Admin user
 	else if (type == "admin")
 	{ 
 		adminUser.findOne({ where: {email: email, passwrd: password } }).then(function (user) {
@@ -552,7 +573,7 @@ app.get('/logout', (req, res) => {
 		res.clearCookie('user_sid');
 		res.redirect('/');
 	} else {
-		res.redirect('/login');
+		res.redirect('/');
 	}
 });
 
