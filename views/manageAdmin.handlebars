@@ -82,10 +82,14 @@
         <div class="form-group">
           <input class="form-control" name="type" type="text" value="admin" hidden>
         </div> 
+        {{#if error}}
+	    <h5>{{error}}</h5>
+	    {{else}}
+	    {{/if}}	
         <div class="form-group">
-          <input class="form-control" type="submit" value="Add User">
+          <input class="form-control btn-primary" type="submit" value="Add User">
         </div>
-      </form>
+      </form> 
     </main>
   </div>
 </div>

@@ -78,12 +78,12 @@
               <td>{{this.recipient_email}}</td>
 		      <td>{{this.type_name}}</td>
               <td>{{this.award_date}}</td>
-			  <td width="40">
-			  	<form action="/deleteAward" method="POST">
+			  <td width=180>
+			  	<form action="/deleteAward" method="POST" style="display:inline-block;">
 					<input type="hidden" name="award_id" value={{this.award_id}}>
 					<button type="submit" class="btn" value="Delete">Delete</button>
 				</form>
-				<form action="/resendAward" method="POST">
+				<form action="/resendAward" method="POST" style="display:inline-block;">
 					<input type="hidden" name="award_id" value={{this.award_id}}>
 					<button type="submit" class="btn" value="Resend">Resend</button>
 				</form>

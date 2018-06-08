@@ -95,14 +95,14 @@
 			<label for="imgUploader">Signature Upload (.png files < 5 KB only):</label> 
 			<input class="form-control" type="file" name="imgUploader" id="imgUploader" required/>
 		</div>
+        {{#if error}}
+	    <h5>{{error}}</h5>
+	    {{else}}
+	    {{/if}}
         <div class="form-group">
-          <input class="form-control" type="submit" name="action" value="Add User">
+          <input class="form-control btn-primary" type="submit" name="action" value="Add User">
         </div>
       </form>
-	  {{#if error}}
-	  <h5>{{error}}</h5>
-	  {{else}}
-	  {{/if}}
-    </main>
+	</main>
   </div>
 </div>

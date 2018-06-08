@@ -53,12 +53,12 @@ app.use((req, res, next) => {
 });
 
 var sessionChecker = (req, res, next) => {
-	if (req.session.user && req.cookies.user_sid) {
-		console.log(req.session.user);
+	if (req.session.user && req.cookies.user_sid && req.session.user.user_id !== undefined) {	
 		res.redirect('/dashboard');
+	} else if (req.session.user && req.cookies.user_sid && req.session.user.admin_id !== undefined) {	
+		res.redirect('/adminDashboard');
 	} else {
-		console.log(req.session.user);
-		next();
+	    next();
 	}
 };
 
@@ -179,13 +179,23 @@ app.get('/register', function (req, res) {
     res.render('register', response);
 });
 
-app.get('/dashboard', function (req, res) {
+app.get('/dashboard', function (req, res) { 
 	var response = {};
+    
+    // Check if user signed in
 	if (req.session.user !== undefined){
-		userID = req.session.user.user_id;
-		response.id = userID;
+
+        // Check if regular user 
+        if (req.session.user.user_id !== undefined)
+        { 
+		    userID = req.session.user.user_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
 	}
-	else{
+	else {
 		return res.redirect('/');
 	}
 
@@ -220,14 +230,23 @@ app.get('/dashboard', function (req, res) {
 
 app.get('/profileInfo', async (req, res) => {
     var response = {};
+
+    // Check if user signed in
 	if (req.session.user !== undefined){
-		userID = req.session.user.user_id;
-		response.id = userID;
+
+        // Check if regular user 
+        if (req.session.user.user_id !== undefined)
+        { 
+		    userID = req.session.user.user_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
 	}
-	else{
+	else {
 		return res.redirect('/');
 	}
-
 
     // User not signed in
 	if (userID === null) {
@@ -252,29 +271,70 @@ app.get('/profileInfo', async (req, res) => {
     
 
 
-app.get('/adminDashboard', async (req, res) => {
-	
-	// all admin pages need to use a session, otherwise you can access them by just typing in the route without logging in
-	
-	var response = {};
-	var rawSQL = "SELECT RU.full_name, RU.email, RU.\"createdAt\", RU.\"updatedAt\", RU.signature_id, S.signature_name " + 
-	"FROM reg_user as RU " +
-	"INNER JOIN signature as S ON RU.signature_id = S.signature_id";
-	await sequelize.query(rawSQL, { type: sequelize.QueryTypes.SELECT }).then(results => {
-		response.regUsers = results; 
-	}); 
-	await sequelize.query('SELECT * FROM admin_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
-		response.adminUsers = results;  
-	});  
-	res.render('adminDashboard', response);  
+app.get('/adminDashboard', async (req, res) => { 
+    var response = {};
+
+    // Check if user signed in
+	if (req.session.user !== undefined){
+
+        // Check if admin user 
+        if (req.session.user.admin_id !== undefined)
+        { 
+		    userID = req.session.user.admin_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
+	}
+	else {
+		return res.redirect('/');
+	}
+
+    // User not signed in
+	if (userID === null) {
+		return res.redirect('/');
+	}
+
+    // User signed in
+	else {
+        var rawSQL = "SELECT RU.full_name, RU.email, RU.\"createdAt\", RU.\"updatedAt\", RU.signature_id, S.signature_name " + 
+	    "FROM reg_user as RU " +
+	    "INNER JOIN signature as S ON RU.signature_id = S.signature_id ORDER BY RU.\"createdAt\"";
+	    await sequelize.query(rawSQL, { type: sequelize.QueryTypes.SELECT }).then(results => {
+		    response.regUsers = results; 
+	    }); 
+	    await sequelize.query('SELECT * FROM admin_user ORDER BY \"createdAt\"', { type: sequelize.QueryTypes.SELECT }).then(results => {
+		    response.adminUsers = results;  
+	    });  
+	    res.render('adminDashboard', response);  
+    }
 });
 
 app.get('/manageReg', async (req, res) => {
     var response = {};
+    
+    // Check if user signed in
+	if (req.session.user !== undefined){
+
+        // Check if admin user 
+        if (req.session.user.admin_id !== undefined)
+        { 
+		    userID = req.session.user.admin_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
+	}
+	else {
+		return res.redirect('/');
+	}
+
 	
 	response.error = displayError(req);
 	
-    await sequelize.query('SELECT * FROM reg_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
+    await sequelize.query('SELECT * FROM reg_user ORDER BY \"createdAt\"', { type: sequelize.QueryTypes.SELECT }).then(results => {
 		response.regUsers = results; 
 	}); 
 
@@ -283,6 +343,24 @@ app.get('/manageReg', async (req, res) => {
 
 app.get('/adminChangeSig', async(req, res) => {
 	var response = {};
+
+    // Check if user signed in
+	if (req.session.user !== undefined){
+
+        // Check if admin user 
+        if (req.session.user.admin_id !== undefined)
+        { 
+		    userID = req.session.user.admin_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
+	}
+	else {
+		return res.redirect('/');
+	}
+
 	response.error = displayError(req);
 	
 	var rawSQL = "SELECT RU.full_name, RU.signature_id, \"S\".signature_id, \"S\".signature_name, \"S\".\"createdAt\", \"S\".\"updatedAt\" " + 
@@ -294,9 +372,35 @@ app.get('/adminChangeSig', async(req, res) => {
 	res.render('adminChangeSig', response);
 });
 
-app.get('/manageAdmin', async (req, res) => {
+app.get('/manageAdmin', async (req, res) => { 
     var response = {};
-    await sequelize.query('SELECT * FROM admin_user', { type: sequelize.QueryTypes.SELECT }).then(results => {
+
+    // Check if user signed in
+	if (req.session.user !== undefined){
+
+        // Check if admin user 
+        if (req.session.user.admin_id !== undefined)
+        { 
+		    userID = req.session.user.admin_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
+	}
+	else {
+		return res.redirect('/');
+	}
+
+    if (req.query.error)
+    {
+        if (req.query.error == '1')
+            response.error = "That email is already taken. Please try again.";
+        if (req.query.error == '2')
+            response.error = "Password and password confirmation do not match.";
+    }
+
+    await sequelize.query('SELECT * FROM admin_user ORDER BY \"createdAt\"', { type: sequelize.QueryTypes.SELECT }).then(results => {
 		response.adminUsers = results; 
 	}); 
     res.render('manageAdmin', response);
@@ -335,35 +439,25 @@ app.post('/adminUser/addUser', (req, res) => {
 });
 
 app.post('/adminUser/addAdminUser', (req, res) => {
-	
-	// should we have an email in use error for admin users too?
-	
+		
 	// Check that password and password confirmation match
 	if (req.body.password !== req.body.passwordConfirmation) {
-		return res.render('index', {
-			errors: ['Password and password confirmation do not match']
-		});
+		return res.redirect('/manageAdmin?error=2');
 	}
     
-    // Check for valid password
-	if (req.body.password.length < 1) {
-		const err = 'Bad password';
-		return res.render('index', {
-			errors: [err]
-		});
-	}
-	
-	    // Add admin user
-	if (req.body.type == "admin")
-	{ 
-		// Save the new admin user
-		adminUser.create({ 
-			email: req.body.email,
-			passwrd: req.body.password
-		}).then(() => { 
-			return res.redirect('/manageAdmin');
-		});
-	}
+    adminUser.findOne({ where: { email: req.body.email } }).then(function (user) { 
+        if (user) {
+            return res.redirect('/manageAdmin?error=1'); 
+        } else { 
+	        // Save the new admin user
+		    adminUser.create({ 
+			    email: req.body.email,
+			    passwrd: req.body.password
+		    }).then(() => { 
+			    return res.redirect('/manageAdmin');
+		    });
+	    }
+    });
 });
 
 app.post('/adminUser/action', (req, res) => {
@@ -456,8 +550,25 @@ app.post('/adminUser/action', (req, res) => {
 app.get('/awardHistory', async (req, res) => {
     var response = {};
 
+    // Check if user signed in
+	if (req.session.user !== undefined){
+
+        // Check if admin user 
+        if (req.session.user.admin_id !== undefined)
+        { 
+		    userID = req.session.user.admin_id;
+		    response.id = userID;
+        }
+        else {
+            return res.redirect('/'); 
+        }
+	}
+	else {
+		return res.redirect('/');
+	}
+
     // Get all awards
-    await sequelize.query('SELECT A.recipient, A.email AS recipient_email, A.award_date, AT.type_name, RU.full_name, RU.email AS sender_email FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id INNER JOIN reg_user RU ON A.user_id = RU.user_id', {type: sequelize.QueryTypes.SELECT}).then(results => {
+    await sequelize.query('SELECT A.recipient, A.email AS recipient_email, A.award_date, AT.type_name, RU.full_name, RU.email AS sender_email FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id INNER JOIN reg_user RU ON A.user_id = RU.user_id ORDER BY A.award_date', {type: sequelize.QueryTypes.SELECT}).then(results => {
         response.awards = results;
     });
     res.render('awardHistory', response);
