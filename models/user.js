@@ -4,7 +4,7 @@ var Sequelize = require('sequelize');
 const sequelize = new Sequelize('postgres://acpohlokgtnbip:70d592be8966d8c73c2a8faf0e035ee8183514019cb225ba80b58ebb546de181@ec2-54-83-204-6.compute-1.amazonaws.com:5432/d71g0leu4f46d0', {
 	dialect:  'postgres',
 	protocol: 'postgres',
-	logging: true,
+	logging: true, // should be false for final turn in
 	dialectOptions: {
 		ssl: true
 	}

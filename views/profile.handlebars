@@ -32,6 +32,7 @@
         <li class="list-group-item"><h5 style="display:inline-block;">Full Name: </h5>  {{full_name}}</li>
         <li class="list-group-item"><h5 style="display:inline-block;">Email: </h5>  {{email}}</li>
         <li class="list-group-item"><h5 style="display:inline-block;">Created: </h5>  {{createdAt}}</li>
+		<li class="list-group-item"><h5 style="display:inline-block;">Updated: </h5>  {{updatedAt}}</li>
       </ul>
       <br>
       <h3>Change Name</h3>
@@ -44,13 +45,17 @@
 		  <input class="btn btn-primary form-control" type="submit" value="Change Name">
         </div>
 	   </form>
-	   <h3>Change Signature (.png files only)</h3>
+	   <h3>Change Signature (.png files < 5 KB only)</h3>
 		<div class="form-group">
 			<form id="frmUploader" enctype="multipart/form-data" action="/changeSignature" method="post">
-				<input type="hidden" id="id" name="id" value="{{id}}"> </input>
+				<input type="hidden" id="id" name="signature_id" value="{{signature_id}}"> </input>
 				<input type="file" name="imgUploader" required/>
-				<input type="submit" name="submit" id="btnSubmit" value="Upload" /> 
+				<input type="submit" name="action" id="btnSubmit" value="Upload" /> 
 			</form>	 
+			{{#if error}}
+			<h5>{{error}}</h5>
+			{{else}}
+			{{/if}}
 		</div>  
     </main>
   </div>

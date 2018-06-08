@@ -55,7 +55,12 @@
 		  <input class="btn btn-primary form-control" type="submit" value="Give Award">
         </div>
 	  </form>
+		{{#if error}}
+		<h5>{{error}}</h5>
+		{{else}}
+		{{/if}}
       <br>
+	  <div id="myLoader"></div>
       <h2>Awards Given</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm"> 
@@ -75,8 +80,12 @@
               <td>{{this.award_date}}</td>
 			  <td width="40">
 			  	<form action="/deleteAward" method="POST">
-				  <input type="hidden" name="id" value={{this.award_id}}>
-				  <button type="submit" class="btn" value="Delete">Delete</button>
+					<input type="hidden" name="award_id" value={{this.award_id}}>
+					<button type="submit" class="btn" value="Delete">Delete</button>
+				</form>
+				<form action="/resendAward" method="POST">
+					<input type="hidden" name="award_id" value={{this.award_id}}>
+					<button type="submit" class="btn" value="Resend">Resend</button>
 				</form>
 			  </td>
 		    </tr>

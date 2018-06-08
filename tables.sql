@@ -14,6 +14,7 @@ CREATE TABLE award_type
 CREATE TABLE signature
 (
     signature_id SERIAL NOT NULL,
+	signature_name TEXT NOT NULL, 
 	img_file BYTEA NOT NULL,
     PRIMARY KEY (signature_id) 
 );

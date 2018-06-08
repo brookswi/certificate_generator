@@ -20,6 +20,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/manageReg">Manage Regular Users</a>
           </li>
+		  <li class="nav-item">
+            <a class="nav-link" href="/adminChangeSig">Change Regular User Signatures</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link active" href="/manageAdmin">Manage Admin Users</a>
           </li>
@@ -63,7 +66,7 @@
       </div>
       <br>
       <h3>Add a User</h3>
-      <form action="/adminUser/addUser" method="POST" style="display: block;"> 
+      <form action="/adminUser/addAdminUser" method="POST" style="display: block;"> 
         <div class="form-group">
           <label for="email">Email:</label>
           <input class="form-control" name="email" type="email" placeholder="Email" required>

@@ -34,14 +34,18 @@
 	        <input name="passwordConfirmation" type="password" class="form-control" id="passwordConfirmation" placeholder="Confirm password" required> 
           </div>
 		  <div class="form-group">
-			<label for="imgUploader" class="text-white">Signature Upload (.png files only):</label> 
+			<label for="imgUploader" class="text-white">Signature Upload (.png files < 5 KB only):</label> 
 			<input type="file" name="imgUploader" id="imgUploader" class="form-control" required/>
 		  </div>
           <div class="form-group">
-            <input class="btn btn-primary form-control" type="submit" value="Create Account">
+            <input class="btn btn-primary form-control" name="action" type="submit" value="Create Account">
           </div> 
           <input name="type" value="regular" hidden>
-        </form>    
+        </form> 
+		{{#if error}}
+		<h5>{{error}}</h5>
+		{{else}}
+		{{/if}}		
         <br> 
       </div> 
       <div class="col-1"></div>
