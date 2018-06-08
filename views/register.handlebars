@@ -15,6 +15,10 @@
       <div class="col-1"></div>
       <div class="col-5 align-self-center register-page">
         <br>
+		{{#if error}}
+		<h5>{{error}}</h5>
+		{{else}}
+		{{/if}}	
         <h2 class="text-white">Register</h2>
         <form action="/user/register" method="POST" enctype="multipart/form-data" class="register-form" style="display: block;">
           <div class="form-group">
@@ -41,11 +45,7 @@
             <input class="btn btn-primary form-control" name="action" type="submit" value="Create Account">
           </div> 
           <input name="type" value="regular" hidden>
-        </form> 
-		{{#if error}}
-		<h5>{{error}}</h5>
-		{{else}}
-		{{/if}}		
+        </form> 	
         <br> 
       </div> 
       <div class="col-1"></div>

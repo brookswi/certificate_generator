@@ -93,7 +93,7 @@ var upload = multer({storage: storage,
 						req.invalidEmailError = "Invalid email";
 						cb(null, false, new Error("Invalid email"));
 					}
-					else if (latexValidator(req.body.full_name) == true){
+					else if (latexValidator(req.body.name) == true){
 						req.invalidCharactersName = "Invalid characters in Name";
 						cb(null, false, new Error("Invalid characters in Name"));
 					}
@@ -176,7 +176,7 @@ app.get('/loginFail', function (req, res) {
 app.get('/register', function (req, res) {
 	var response = {};
 	response.error = displayError(req);
-    res.render('register');
+    res.render('register', response);
 });
 
 app.get('/dashboard', function (req, res) {
