@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 // Create a sequelize instance with our local postgres database information.
-const sequelize = new Sequelize('postgres://acpohlokgtnbip:70d592be8966d8c73c2a8faf0e035ee8183514019cb225ba80b58ebb546de181@ec2-54-83-204-6.compute-1.amazonaws.com:5432/d71g0leu4f46d0', {
+const sequelize = new Sequelize('postgres://ypwsvxajbpyntq:c06ddfbffb71f7c71a3631f65ee89d212fdc4651ebf5d16542f39abec0720382@ec2-174-129-26-203.compute-1.amazonaws.com:5432/dbihqun7p67thp', {
 	dialect:  'postgres',
 	protocol: 'postgres',
 	logging: true, // should be false for final turn in
@@ -70,6 +70,7 @@ var adminUser = sequelize.define('admin_user', {
 	tableName: 'admin_user'
 });
 
+
 // award model
 var award = sequelize.define('award', {
 	recipient: {
@@ -93,7 +94,7 @@ var award = sequelize.define('award', {
      			model: "reg_user",
 
      		// This is the column name of the referenced model
-     			key: 'id',
+     			key: 'user_id',
 
      		// This declares when to check the foreign key constraint. PostgreSQL only.
      			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
@@ -101,11 +102,13 @@ var award = sequelize.define('award', {
 	},
 	type: {
 		type: Sequelize.INTEGER,
+        /*
 		references: {
 			model: "award_type",
 			key:"type_id",
 			deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
 		}
+        */
 	}
 },{
 	tableName: 'award'
@@ -131,12 +134,12 @@ var signature = sequelize.define('signature', {
 // create all the defined tables in the specified database.
 sequelize.sync()
 	.then(() => console.log('User tables have been successfully created, if they don\'t already exist'))
-    /*
+
     .then(() => adminUser.create({
         email: 'brookswi@oregonstate.edu',
         passwrd: 'testpassword123'
     }))
-    */
+
 	.catch(error => console.log('This error occured', error));
 
 

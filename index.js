@@ -25,6 +25,7 @@ var displayError = require('./util/displayError.js');
 var latexValidator = require('./util/latexValidator.js');
 var validateUserErrors = require('./util/validateUserErrors.js');
 const maxImageFileSize = 5120;
+
 //configure app
 var app = express();
 
@@ -69,12 +70,12 @@ app.get('/', sessionChecker, (req, res) => {
 var transporter = nodemailer.createTransport({
  service: 'gmail',
  auth: {
-        user: 'oregonstatecapstone@gmail.com',
-        pass: 'capstone'
+        user: 'certificategenerator123@gmail.com',
+        pass: 'certgen792'
     }
 });
 
- // handle image upload: using memoryStorage to get the buffer
+// handle image upload: using memoryStorage to get the buffer
 const storage = multer.memoryStorage();
 
 var upload = multer({storage: storage, 
@@ -214,7 +215,7 @@ app.get('/dashboard', function (req, res) {
 			response.full_name = results[0].full_name;
 
             // Get info on awards user has given
-			return sequelize.query('SELECT A.award_id, A.recipient, A.email AS recipient_email, A.award_date, AT.type_name FROM award A ' + 'INNER JOIN award_type AT ON A.type = AT.type_id WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT});})
+			return sequelize.query('SELECT A.award_id, A.recipient, A.email AS recipient_email, A.award_date, A.type FROM award A WHERE A.user_id = ' + userID, {type: sequelize.QueryTypes.SELECT});})
 		.then(results => {
 			console.log(results);
 			response.awards = results;
@@ -827,7 +828,7 @@ app.post('/user/forgot', (req, res) => {
 	User.findOne({ where: {email: email}}).then(function (user) {
 		if (user) {
 			const mailOptions = {
-				from: 'oregonstatecapstone@gmail.com', // sender address
+				from: 'wrbrooks93@gmail.com', // sender address
   				to: email, // list of receivers
   				subject: 'Forgot Password', // Subject line
   				html: 'Password: ' + user.passwrd // plain text body

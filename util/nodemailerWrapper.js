@@ -5,8 +5,8 @@ module.exports = function(fileObj){
 		var transporter = nodemailer.createTransport({
 		 service: 'gmail',
 		 auth: {
-				user: 'oregonstatecapstone@gmail.com',
-				pass: 'capstone'
+				user: 'certificategenerator123@gmail.com',
+				pass: 'certgen792'
 			},
 		tls: {
 				rejectUnauthorized: false
@@ -14,7 +14,7 @@ module.exports = function(fileObj){
 		});
 		
 		const mailOptions = {
-				from: 'oregonstatecapstone@gmail.com', // sender address
+				from: 'certificategenerator123@gmail.com', // sender address
   				to: fileObj.recipient_email, // list of receivers
   				subject: 'Award Certificate', // Subject line
   				html: 'Congratulations! Attached is your certificate.', // plain text body

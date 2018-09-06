@@ -1,9 +1,3 @@
-DROP TABLE IF EXISTS signature;
-DROP TABLE IF EXISTS reg_user;
-DROP TABLE IF EXISTS award;
-DROP TABLE IF EXISTS award_type;
-DROP TABLE IF EXISTS admin_user;
-
 CREATE TABLE award_type
 (
     type_id SERIAL NOT NULL,
@@ -11,6 +5,7 @@ CREATE TABLE award_type
     PRIMARY KEY (type_id)
 );
 
+/*
 CREATE TABLE signature
 (
     signature_id SERIAL NOT NULL,
@@ -39,6 +34,7 @@ CREATE TABLE reg_user
 	PRIMARY KEY (user_id),
     FOREIGN KEY (signature_id) REFERENCES signature (signature_id)
 );
+*/
 
 CREATE TABLE award
 (
